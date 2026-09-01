@@ -119,6 +119,9 @@ export default function EmpresaPage() {
 
     setMessage("Dados da empresa salvos com sucesso!")
     setSaving(false)
+
+    router.push("/dashboard")
+    router.refresh()
   }
 
   if (loading) {
@@ -368,3 +371,4 @@ export default function EmpresaPage() {
     </main>
   )
 }
+
