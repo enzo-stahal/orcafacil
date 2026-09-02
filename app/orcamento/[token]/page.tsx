@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 
@@ -85,14 +86,28 @@ export default async function PublicQuotePage({
 
   const customer = quote.customer
 
+  // URL pública do orçamento
+  // Usa o domínio que o cliente está acessando,
+  // evitando depender do NEXT_PUBLIC_SITE_URL.
+  const headersList = await headers()
+
+  const host = headersList.get("host")
+  const forwardedProto = headersList.get("x-forwarded-proto")
+
+  const protocol =
+    forwardedProto ||
+    (process.env.NODE_ENV === "development"
+      ? "http"
+      : "https")
+
+  const publicUrl =
+    `${protocol}://${host}/orcamento/${token}`
+
   // WhatsApp
   const whatsappNumber =
     customer?.whatsapp ||
     customer?.phone ||
     ""
-
-  const publicUrl =
-    `http://localhost:3000/orcamento/${token}`
 
   const whatsappMessage =
     `Olá, ${customer?.name || "tudo bem"}! Segue seu orçamento ${quoteNumber} pelo OrçaFácil:\n\n${publicUrl}`
